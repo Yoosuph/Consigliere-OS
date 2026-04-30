@@ -1,0 +1,6 @@
+{
+  "name": "Consigliere's OS Portfolio",
+  "description": "A portfolio for a software developer named 'Consigliere', designed to look and feel like a Windows 10 desktop environment. It features draggable windows, a functional taskbar, and several 'apps' to showcase projects, skills, and an AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
