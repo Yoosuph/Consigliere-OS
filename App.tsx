@@ -9,7 +9,7 @@ import ActionCenter from './components/ActionCenter';
 import { BootState } from './components/BootScreen';
 import { AppID } from './types';
 import type { WindowInstance, Notification, FileSystemItem } from './types';
-import { APP_METADATA, DESKTOP_ICONS } from './constants';
+import { APP_METADATA, DESKTOP_ICONS, ICONS } from './constants';
 import { cloneDeep, findNodeByPath } from './utils';
 
 // Import app components
@@ -486,7 +486,7 @@ const AppContent: React.FC = () => {
         switch (appId) {
             case AppID.BROWSER: return <ChromeBrowser />;
             case AppID.NOTEPAD: return <Notepad />;
-            case AppID.EXPLORER: return <Explorer fileSystem={fileSystem} renamingInfo={renamingInfo} onNewFolder={handleNewFolder} onRenameItem={handleRenameItem} clearRenaming={() => setRenamingInfo(null)} />;
+            case AppID.EXPLORER: return <Explorer fileSystem={fileSystem} renamingInfo={renamingInfo} onNewFolder={handleNewFolder} onRenameItem={handleRenameItem} clearRenaming={() => setRenamingInfo(null)} onStartRename={(path, id) => setRenamingInfo({ path, id })} onDeleteItem={handleDeleteItem} onCopyItem={handleCopyItem} onMoveItem={handleMoveItem} />;
             case AppID.GEMINI_ASSISTANT: return <GeminiAssistant />;
             case AppID.RECYCLE_BIN: return <RecycleBin />;
             case AppID.SETTINGS: return <Settings setWallpaper={changeWallpaper} />;

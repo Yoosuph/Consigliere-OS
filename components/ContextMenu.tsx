@@ -22,9 +22,10 @@ interface ContextMenuProps {
     onRefresh: () => void;
     onNewFolder?: () => void;
     onClose: () => void;
+    items?: MenuItem[];
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, openApp, onRefresh, onNewFolder, onClose }) => {
+const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, openApp, onRefresh, onNewFolder, onClose, items }) => {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     // FIX: The `useRef` hook was called without an initial value, causing an error.
     // Initialized it with `undefined` and updated the type to `number | undefined` to
@@ -108,7 +109,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, openApp, onRefresh, onN
             style={{ top: y, left: x }}
             onClick={(e) => e.stopPropagation()}
         >
-            {renderMenu(menuItems)}
+            {renderMenu(items || menuItems)}
         </div>
     );
 };
