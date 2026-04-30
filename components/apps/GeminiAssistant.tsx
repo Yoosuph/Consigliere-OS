@@ -1,7 +1,6 @@
 
 
 import React, { useState, useRef, useEffect } from 'react';
-import { streamAssistantResponse } from '../../services/geminiService';
 import { ICONS } from '../../constants';
 import type { GenerateContentResponse } from '@google/genai';
 
@@ -37,7 +36,8 @@ const GeminiAssistant: React.FC = () => {
 
     try {
         setMessages(prev => [...prev, { role: 'model', content: '' }]);
-        const stream = await streamAssistantResponse(input);
+        const module = await import('../../services/geminiService');
+        const stream = await module.streamAssistantResponse(input);
         for await (const chunk of stream) {
             const chunkText = chunk.text;
             setMessages(prev => {

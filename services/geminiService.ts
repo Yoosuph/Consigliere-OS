@@ -1,38 +1,45 @@
-
-
-import { GoogleGenAI, Chat } from "@google/genai";
 import type { GenerateContentResponse } from "@google/genai";
 
+const apiKey = process.env.API_KEY;
 
-// Ensure the API key is available
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set.");
-}
+let chatInstancePromise: Promise<any> | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getChatInstance = async () => {
+    if (!apiKey) {
+        throw new Error("Gemini API key is not configured.");
+    }
 
-let chat: Chat | null = null;
-
-const getChatInstance = () => {
-    if (!chat) {
-        chat = ai.chats.create({
+    if (!chatInstancePromise) {
+        const { GoogleGenAI } = await import("@google/genai");
+        const ai = new GoogleGenAI({ apiKey });
+        chatInstancePromise = Promise.resolve(ai.chats.create({
             model: 'gemini-2.5-flash',
             config: {
                 systemInstruction: "You are Javis, a helpful AI assistant for a software developer's portfolio website. The developer's name is Consigliere. You should answer questions about his skills, projects, and experience based on the provided portfolio content. Be friendly, professional, and a little witty. Keep responses concise.",
             },
-        });
+        }));
     }
-    return chat;
+
+    return chatInstancePromise;
 };
 
-
 export const streamAssistantResponse = async (message: string): Promise<AsyncGenerator<GenerateContentResponse>> => {
+    if (!apiKey) {
+        async function* fallback() {
+            yield { text: "Gemini assistant is unavailable because the API key is not configured." } as unknown as GenerateContentResponse;
+        }
+        return fallback();
+    }
+
     try {
-        const chatInstance = getChatInstance();
-        const result = await chatInstance.sendMessageStream({ message });
+        const chat = await getChatInstance();
+        const result = await chat.sendMessageStream({ message });
         return result;
     } catch (error) {
         console.error("Gemini API error:", error);
-        throw new Error("Failed to get response from AI assistant.");
+        async function* fallback() {
+            yield { text: "Sorry, I couldn't connect to the Gemini API right now." } as unknown as GenerateContentResponse;
+        }
+        return fallback();
     }
 };
